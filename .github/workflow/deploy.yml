@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,18 +23,20 @@ jobs:
       - name: Zip deployment package
         run: zip -r deployment.zip index.js node_modules package.json
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Upload to S3
         run: |
           aws s3 cp deployment.zip s3://serverlesstestapi123/deployment.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
 
-      - name: Deploy to Lambda
+      - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code --function-name nodejs-api-lambda --s3-bucket serverlesstestapi123 --s3-key deployment.zip
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
+
+      - name: Notify Deployment Success
+        run: echo "Deployment completed successfully!"
