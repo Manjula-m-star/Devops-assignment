@@ -1,0 +1,64 @@
+testing
+name: Build and Deploy to AWS EKS
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    name: Build and Push Docker Image & Deploy to EKS
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Configure AWS Credentials
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # Login to Amazon ECR
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+        docker login --username AWS --password-stdin \
+        ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+    # Build Docker Image
+    - name: Build Docker Image
+      run: |
+        docker build -t ${{ secrets.ECR_REPOSITORY }} .
+
+    # Tag Docker Image
+    - name: Tag Docker Image
+      run: |
+        docker tag ${{ secrets.ECR_REPOSITORY }}:latest \
+        ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
+    # Push Docker Image to ECR
+    - name: Push Docker Image to Amazon ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
+
+    # Update kubeconfig for EKS
+   # - name: Update kubeconfig for Amazon EKS
+   #   run: |
+    #    aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    # Deploy to Kubernetes
+  #  - name: Deploy to EKS
+  #    run: |
+    #    kubectl apply -f deployment.yaml
+     #   kubectl rollout status deployment/my-app
+     #   kubectl get pods -o wide
