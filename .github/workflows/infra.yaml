@@ -56,15 +56,17 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           echo "$HOME/.tflint/bin" >> $GITHUB_PATH
 
-      # Step 5: Verify Infra Directory
-      - name: Debug Directory
-        run: ls -R
+      # Step 5: Debug - Check Directory Structure
+      - name: Debug Directory Structure
+        run: ls -lahR
 
-      # Step 6: Run TFLint (Terraform Linter)
+      # Step 6: Run TFLint using --chdir for each module (TFLint v0.47+ Fix)
       - name: Run TFLint
         run: |
           tflint --init
-          tflint infra/
+          tflint --chdir=infra/modules/ECR
+          tflint --chdir=infra/modules/IAM
+          tflint --chdir=infra/modules/LAMDA
 
       # Step 7: Initialize Terraform
       - name: Terraform Init
