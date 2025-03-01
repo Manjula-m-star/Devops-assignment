@@ -62,7 +62,7 @@ jobs:
 
       # Step 6: Initialize Terraform
       - name: Terraform Init
-        run: terraform init -backend=true
+        run: terraform init -backend=true --chdir=infra/
         working-directory: infra/
 
       # Step 7: Validate Terraform Configuration
