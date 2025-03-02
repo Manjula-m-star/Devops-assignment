@@ -99,7 +99,7 @@ jobs:
       - name: Terraform Plan
         run: |
           cd infra/
-          terraform plan -var-file=/environment/dev.tfvars -out=tfplan
+          terraform plan -var-file=environment/dev.tfvars -out=tfplan
 
       # Step 12: Terraform Apply (Only on Push)
       - name: Terraform Apply
