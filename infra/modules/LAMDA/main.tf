@@ -26,12 +26,11 @@ resource "aws_lambda_function" "my_lambda" {
   role          = var.lambda_role_arn 
   package_type  = "Image"
   image_uri = 010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest
-  (
+
   length(data.aws_ecr_image.latest_image) > 0 
   ? "${data.aws_ecr_image.latest_image[0].registry_id}.dkr.ecr.us-west-2.amazonaws.com/${data.aws_ecr_image.latest_image[0].repository_name}:latest" 
   : "public.ecr.aws/lambda/nodejs:latest"
-)
-
+  
   environment {
     variables = {
       NODE_ENV = "dev"
