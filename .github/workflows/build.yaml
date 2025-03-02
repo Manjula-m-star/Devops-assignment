@@ -32,7 +32,7 @@ jobs:
       run: |
         IMAGE_NAME=nodejs-api
         ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
-        ECR_REPOSITORY=$ECR_REGISTRY/$IMAGE_NAME
+        ECR_REPOSITORY=$ECR_REGISTRY/my-app-repo
 
         # Build Docker Image
         docker build -t $IMAGE_NAME .
