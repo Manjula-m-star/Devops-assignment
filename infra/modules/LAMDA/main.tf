@@ -14,7 +14,7 @@ data "aws_ecr_repository" "app_repo" {
 }
 
 data "aws_ecr_image" "latest_image" {
-  count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
+ # count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
   repository_name = "my-app-repo"
   most_recent     = true
 }
