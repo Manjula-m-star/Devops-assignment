@@ -66,7 +66,7 @@ jobs:
           tflint --init
           tflint --chdir=infra/
 
-      # Step 7: Initialize Terraform (Corrected)
+      # Step 7: Initialize Terraform (Fixed - Removed -chdir)
       - name: Terraform Init
         run: |
           cd infra/
@@ -74,18 +74,26 @@ jobs:
 
       # Step 8: Validate Terraform Configuration
       - name: Terraform Validate
-        run: terraform validate --chdir=infra/
+        run: |
+          cd infra/
+          terraform validate
 
       # Step 9: Terraform Plan
       - name: Terraform Plan
-        run: terraform plan -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
+        run: |
+          cd infra/
+          terraform plan -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
 
       # Step 10: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
-        run: terraform apply -auto-approve -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
+        run: |
+          cd infra/
+          terraform apply -auto-approve -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
 
       # Step 11: Terraform Destroy (Manual Trigger Only)
       - name: Terraform Destroy
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'destroy'
-        run: terraform destroy -auto-approve -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
+        run: |
+          cd infra/
+          terraform destroy -auto-approve -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
