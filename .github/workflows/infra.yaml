@@ -12,7 +12,6 @@ on:
           - dev
           - staging
           - prod
-          - destroy
 
   push:
     branches:
@@ -100,14 +99,14 @@ jobs:
       - name: Terraform Plan
         run: |
           cd infra/
-          terraform plan -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
+          terraform plan
 
       # Step 12: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: |
           cd infra/
-          terraform apply -auto-approve -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
+          terraform apply -auto-approve
 
       # Step 13: Terraform Destroy (Only if manually triggered with "destroy")
       - name: Terraform Destroy
