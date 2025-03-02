@@ -37,8 +37,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Force Remove Old Terraform (Fixes chdir issue)
-      - name: Remove Old Terraform Binary (if exists)
+      # Step 2: Remove Any Pre-installed Terraform Versions
+      - name: Remove Pre-installed Terraform (Fixes chdir issue)
         run: |
           sudo rm -f $(which terraform) || true
           rm -rf ~/.terraform.d/plugin-cache || true
@@ -47,7 +47,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.7  # Explicitly set version
+          terraform_version: 1.5.7  # Ensures Terraform version supports latest flags
 
       # Step 4: Verify Terraform Version
       - name: Check Terraform Version
@@ -74,7 +74,7 @@ jobs:
           tflint --init
           tflint
 
-      # Step 8: Initialize Terraform (Fixed)
+      # Step 8: Initialize Terraform (Fixed - Removed -chdir)
       - name: Terraform Init
         run: |
           cd infra/
@@ -86,7 +86,7 @@ jobs:
           cd infra/
           terraform validate
 
-      # Step 10: Set Deployment Environment Variable
+      # Step 10: Set Deployment Environment Variable (Fix for Push & PR)
       - name: Set Deployment Environment
         run: echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_ENV
 
