@@ -25,7 +25,7 @@ resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn 
   package_type  = "Image"
-  image_uri     =  "010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest"
+  image_uri     = "010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest"
 
   environment {
     variables = {
