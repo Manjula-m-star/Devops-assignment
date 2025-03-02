@@ -9,7 +9,7 @@ terraform {
 }
 
 # Data Source: Get latest ECR image for Lambda
-data "aws_ecr_repository" "app_repo" {
+data "aws_ecr_repository" "my-demo-repo" {
   name = "my-demo-repo"
 }
 
