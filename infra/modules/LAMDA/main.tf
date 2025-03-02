@@ -17,7 +17,7 @@ data "aws_ecr_image" "latest_image" {
 # Lambda Function with ECR Image
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
-  role          = aws_iam_role.lambda_exec_role.arn
+  role          = var.lambda_role_arn  # ✅ Fix: Use input variable
   image_uri     = data.aws_ecr_image.latest_image.image_uri
   package_type  = "Image"
 

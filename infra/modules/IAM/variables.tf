@@ -1,7 +1,5 @@
 
-# variable "lambda_role_arn" {
-  
-# }
-# variable "attach_basic_execution" {
-  
-# }
+variable "lambda_role_arn" {
+  description = "IAM Role ARN for Lambda execution"
+  type        = string
+}
