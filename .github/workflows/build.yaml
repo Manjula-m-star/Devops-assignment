@@ -1,7 +1,7 @@
 name: Build and Push Docker Images to ECR
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 permissions:
   contents: read
@@ -12,33 +12,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Set up Docker Buildx
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    # Configure AWS Credentials
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
-        role-session-name: GitHubActions
         aws-region: us-east-1
+        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsRole
 
-    # Log in to Amazon ECR
     - name: Log in to Amazon ECR
       run: |
         aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
 
-    # Build, tag, and push Docker image
-    - name: Build, Tag & Push Docker Image for Hello World Service
+    - name: Build, Tag & Push Docker Image for Node.js API
       run: |
-        docker build -t nodejs-api-lambda ./backend
-        docker tag nodejs-api-lambda:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nodejs-api-repo:latest
-        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/nodejs-api-repo:latest
+        IMAGE_NAME=nodejs-api
+        ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+        ECR_REPOSITORY=$ECR_REGISTRY/$IMAGE_NAME
 
-    # Cleanup local Docker images
+        # Build Docker Image
+        docker build -t $IMAGE_NAME .
+
+        # Tag Docker Image
+        docker tag $IMAGE_NAME:latest $ECR_REPOSITORY:latest
+
+        # Push Docker Image to ECR
+        docker push $ECR_REPOSITORY:latest
+
     - name: Cleanup local Docker images
-      run: docker image prune -af
+      run: |
+        docker image prune -f
