@@ -9,19 +9,22 @@ terraform {
 }
 
 # Data Source: Get latest ECR image for Lambda
-resource "aws_ecr_image" "latest_image" {
+data "aws_ecr_repository" "app_repo" {
+  name = "my-app-repo"
+}
+
+data "aws_ecr_image" "latest_image" {
+  count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
   repository_name = "my-app-repo"
   most_recent     = true
-  lifecycle {
-    ignore_changes =[image_tag]
-  }
 }
+
 
 # Lambda Function with ECR Image
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
-  role          = var.lambda_role_arn  # ✅ Fix: Use input variable
-  image_uri     = "${var.ecr_repository_url}:latest"  # ✅ Fix: Use ECR Repo URL
+  role          = var.lambda_role_arn 
+  image_uri     = image_uri = length(data.aws_ecr_image.latest_image) > 0 ? "${data.aws_ecr_image.latest_image[0].repository_url}:latest" : "public.ecr.aws/lambda/nodejs:latest"
   package_type  = "Image"
 
   environment {
