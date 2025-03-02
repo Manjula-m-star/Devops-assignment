@@ -99,14 +99,14 @@ jobs:
       - name: Terraform Plan
         run: |
           cd infra/
-          terraform plan
+           terraform plan -var-file=../environment/dev.tfvars -out=tfplan || terraform plan -refresh=false -var-file=../environment/dev.tfvars -out=tfplan
 
       # Step 12: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: |
           cd infra/
-          terraform apply -auto-approve
+          terraform apply -auto-approve tfplan
 
       # Step 13: Terraform Destroy (Only if manually triggered with "destroy")
       - name: Terraform Destroy
