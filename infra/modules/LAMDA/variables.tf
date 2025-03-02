@@ -18,3 +18,8 @@ variable "attach_basic_execution" {
   type        = bool
   default     = true
 }
+
+variable "ecr_repository_url" {
+  description = "The URL of the ECR repository"
+  type        = string
+}
