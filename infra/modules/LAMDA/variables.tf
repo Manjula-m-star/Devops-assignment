@@ -1,17 +1,20 @@
-
-
-variable "region" {
-  description = "AWS region where resources will be deployed"
+variable "lambda_function_name" {
+  description = "Lambda function name"
   type        = string
-  default     = "us-east-1"
-}
-
-variable "image_name"{
-default="183114607892.dkr.ecr.us-west-2.amazonaws.com/helloword-service:latest"
 }
 
 variable "lambda_role_arn" {
+  description = "IAM Role ARN for Lambda"
+  type        = string
+}
+
+variable "image_name" {
+  description = "ECR Image URI for Lambda"
+  type        = string
 }
 
 variable "attach_basic_execution" {
+  description = "Boolean to attach AWSLambdaBasicExecutionRole policy"
+  type        = bool
+  default     = true
 }
