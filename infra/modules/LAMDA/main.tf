@@ -8,18 +8,6 @@ terraform {
   required_version = ">= 1.0.0"
 }
 
-# Data Source: Get latest ECR image for Lambda
-data "aws_ecr_repository" "my-demo-repo" {
-  name = "my-demo-repo"
-}
-
-data "aws_ecr_image" "latest_image" {
- # count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
-  repository_name = "my-demo-repo"
-  most_recent     = true
-}
-
-
 # Lambda Function with ECR Image
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
