@@ -42,6 +42,8 @@ jobs:
         run: |
           sudo rm -f $(which terraform) || true
           rm -rf ~/.terraform.d/plugin-cache || true
+          sudo rm -rf /usr/local/bin/terraform
+          sudo rm -rf /home/runner/.terraform.d/
 
       # Step 3: Set up Terraform (Explicit Version)
       - name: Set up Terraform
@@ -49,9 +51,13 @@ jobs:
         with:
           terraform_version: 1.5.7  # Ensures Terraform version supports latest flags
 
-      # Step 4: Verify Terraform Version
-      - name: Check Terraform Version
-        run: terraform version
+      # Step 4: Verify Terraform Version & Binary Path
+      - name: Verify Terraform Version
+        run: |
+          echo "Terraform Version:"
+          terraform version
+          echo "Terraform Binary Path:"
+          which terraform
 
       # Step 5: Configure AWS Credentials
       - name: Configure AWS Credentials
@@ -109,3 +115,4 @@ jobs:
         run: |
           cd infra/
           terraform destroy -auto-approve -var-file=../environment/dev.tfvars
+
