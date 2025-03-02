@@ -24,7 +24,7 @@ data "aws_ecr_image" "latest_image" {
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn 
-  image_uri     = image_uri = length(data.aws_ecr_image.latest_image) > 0 ? "${data.aws_ecr_image.latest_image[0].repository_url}:latest" : "public.ecr.aws/lambda/nodejs:latest"
+  image_uri     = length(data.aws_ecr_image.latest_image) > 0 ? "${data.aws_ecr_image.latest_image[0].repository_url}:latest" : "public.ecr.aws/lambda/nodejs:latest"
   package_type  = "Image"
 
   environment {
