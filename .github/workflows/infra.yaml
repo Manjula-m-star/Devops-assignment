@@ -12,6 +12,7 @@ on:
           - dev
           - staging
           - prod
+          - destroy
 
   push:
     branches:
@@ -20,7 +21,7 @@ on:
   pull_request:
     branches:
       - main
-      
+
 permissions:
   contents: read
   pull-requests: write   
@@ -36,7 +37,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Terraform with Latest Version
+      # Step 2: Set up Terraform (Ensuring latest version)
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -60,13 +61,14 @@ jobs:
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           tflint --version  # Verify the installed version
 
-      # Step 6: Run TFLint (Linting the Terraform code)
+      # Step 6: Run TFLint
       - name: Run TFLint
         run: |
+          cd infra/
           tflint --init
-          tflint --chdir=infra/
+          tflint
 
-      # Step 7: Initialize Terraform (Fixed - Removed -chdir)
+      # Step 7: Initialize Terraform (Fixed)
       - name: Terraform Init
         run: |
           cd infra/
@@ -78,22 +80,26 @@ jobs:
           cd infra/
           terraform validate
 
-      # Step 9: Terraform Plan
+      # Step 9: Set Environment Variable (Fix for Push & PR)
+      - name: Set Deployment Environment
+        run: echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_ENV
+
+      # Step 10: Terraform Plan
       - name: Terraform Plan
         run: |
           cd infra/
-          terraform plan -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
+          terraform plan -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
 
-      # Step 10: Terraform Apply (Only on Push)
+      # Step 11: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: |
           cd infra/
-          terraform apply -auto-approve -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
+          terraform apply -auto-approve -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
 
-      # Step 11: Terraform Destroy (Manual Trigger Only)
+      # Step 12: Terraform Destroy (Only if manually triggered with "destroy")
       - name: Terraform Destroy
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'destroy'
+        if: github.event_name == 'workflow_dispatch' && env.DEPLOY_ENV == 'destroy'
         run: |
           cd infra/
-          terraform destroy -auto-approve -var-file=../environment/${{ github.event.inputs.environment }}.tfvars
+          terraform destroy -auto-approve -var-file=../environment/dev.tfvars
