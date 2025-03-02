@@ -60,7 +60,7 @@ jobs:
       - name: Run TFLint
         run: |
           tflint --init
-          tflint --chdir=infra/
+          tflint --chdir=infra/ || exit 1  # Enforce validation
 
       # Step 6: Initialize Terraform
       - name: Terraform Init
