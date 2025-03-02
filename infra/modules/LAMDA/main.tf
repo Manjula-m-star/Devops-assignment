@@ -1,3 +1,13 @@
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  required_version = ">= 1.0.0"
+}
 resource "aws_cognito_user_pool" "oidc" {
   name = "oidc-user-pool"
 
