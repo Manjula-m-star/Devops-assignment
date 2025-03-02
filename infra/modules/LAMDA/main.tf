@@ -10,12 +10,12 @@ terraform {
 
 # Data Source: Get latest ECR image for Lambda
 data "aws_ecr_repository" "app_repo" {
-  name = "my-app-repo"
+  name = "my-demo-repo"
 }
 
 data "aws_ecr_image" "latest_image" {
  # count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
-  repository_name = "my-app-repo"
+  repository_name = "my-demo-repo"
   most_recent     = true
 }
 
