@@ -50,42 +50,36 @@ jobs:
           role-session-name: GitHubActions
           aws-region: us-east-1
 
-      # Step 4: Install TFLint
+      # Step 4: Install TFLint (Terraform Linter)
       - name: Install TFLint
         run: |
-          curl -fsSL https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          echo "$HOME/.tflint/bin" >> $GITHUB_PATH
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --version  # Verify the installed version
 
-      # Step 5: Debug - Check Directory Structure
-      - name: Debug Directory Structure
-        run: ls -lahR
-
-      # Step 6: Run TFLint using --chdir for each module (TFLint v0.47+ Fix)
+      # Step 5: Run TFLint (Linting the Terraform code)
       - name: Run TFLint
         run: |
           tflint --init
-          tflint --chdir=infra/modules/ECR
-          tflint --chdir=infra/modules/IAM
-          tflint --chdir=infra/modules/LAMDA
+          tflint --chdir=infra/
 
-      # Step 7: Initialize Terraform
+      # Step 6: Initialize Terraform
       - name: Terraform Init
         run: terraform init -backend-config=environment/${{ github.event.inputs.environment }}.backend --chdir=infra/
 
-      # Step 8: Validate Terraform Configuration
+      # Step 7: Validate Terraform Configuration
       - name: Terraform Validate
         run: terraform validate --chdir=infra/
 
-      # Step 9: Terraform Plan
+      # Step 8: Terraform Plan
       - name: Terraform Plan
         run: terraform plan -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
 
-      # Step 10: Terraform Apply (Only on Push)
+      # Step 9: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: terraform apply -auto-approve -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
 
-      # Step 11: Terraform Destroy (Manual Trigger Only)
+      # Step 10: Terraform Destroy (Manual Trigger Only)
       - name: Terraform Destroy
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'destroy'
         run: terraform destroy -auto-approve -var-file=environment/${{ github.event.inputs.environment }}.tfvars --chdir=infra/
