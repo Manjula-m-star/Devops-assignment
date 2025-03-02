@@ -1,4 +1,14 @@
 # IAM Role for Lambda
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  required_version = ">= 1.0.0"
+}
+
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambda_exec_role_hello_world"
 
