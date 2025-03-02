@@ -1,6 +1,0 @@
-bucket         = "serverlesstestapi123"  # Replace with your actual S3 bucket name
-key            = "infra/terraform.tfstate"    # Path inside the bucket
-region         = "us-east-1"                  # AWS region
-dynamodb_table = "terraform-locks"            # State locking table
-encrypt        = true                         # Encrypt state file
-
