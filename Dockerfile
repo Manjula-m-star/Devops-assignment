@@ -5,7 +5,7 @@ FROM node:20
 WORKDIR /app
 
 # Copy package.json and package-lock.json first (if available)
-COPY package*.json ./
+COPY backend/package*.json ./
 
 # Ensure npm is up to date
 RUN npm install -g npm@latest
