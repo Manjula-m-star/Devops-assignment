@@ -18,7 +18,7 @@ data "aws_ecr_image" "latest_image" {
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn  # ✅ Fix: Use input variable
-  image_uri     = data.aws_ecr_image.latest_image.image_uri
+  image_uri     = "${var.ecr_repository_url}:latest"  # ✅ Fix: Use ECR Repo URL
   package_type  = "Image"
 
   environment {
