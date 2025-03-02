@@ -58,6 +58,12 @@ resource "aws_lambda_function" "my_lambda" {
     }
   }
 }
+# Attach Basic Execution Policy if Required
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
+  count      = var.attach_basic_execution ? 1 : 0
+  role       = var.lambda_role_arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
 
 
 # Create API Gateway

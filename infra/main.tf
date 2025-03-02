@@ -29,4 +29,5 @@ module "lambda" {
   lambda_function_name = var.lambda_function_name
   lambda_role_arn      = module.iam.lambda_role_arn
   image_name           = "${module.ecr.ecr_repository_url}:latest"
+  attach_basic_execution = true  # Ensure this argument is passed
 }
