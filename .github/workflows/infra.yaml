@@ -84,7 +84,7 @@ jobs:
       - name: Terraform Init
         run: |
           cd infra/
-          terraform init -backend=false --chdir=infra/
+          run: terraform init -backend-config=environment/${{ github.event.inputs.environment }}.backend --chdir=infra/
 
       # Step 9: Validate Terraform Configuration
       - name: Terraform Validate
