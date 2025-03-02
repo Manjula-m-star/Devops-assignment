@@ -1,8 +1,16 @@
-FROM node:1.0.0
+FROM node:18  # 
+# Set working directory
 WORKDIR /app
+
+# Copy package.json and install dependencies
 COPY package*.json ./
 RUN npm install
+
+# Copy application files
 COPY . .
-ENV PORT=3000
+
+# Expose port
 EXPOSE 3000
-CMD [ "npm", "start" ]
+
+# Start the application
+CMD ["node", "index.js"]
