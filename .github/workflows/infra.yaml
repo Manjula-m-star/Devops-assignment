@@ -84,7 +84,7 @@ jobs:
       - name: Terraform Init
         run: |
           cd infra/
-          run: terraform init -backend-config=environment/${{ github.event.inputs.environment }}.backend --chdir=infra/
+          terraform init -backend-config=../environment/.backend
 
       # Step 9: Validate Terraform Configuration
       - name: Terraform Validate
@@ -115,4 +115,3 @@ jobs:
         run: |
           cd infra/
           terraform destroy -auto-approve -var-file=../environment/dev.tfvars
-
