@@ -47,7 +47,7 @@ resource "aws_cognito_user_pool_client" "oidc_client" {
 
 # Lambda Function
 resource "aws_lambda_function" "my_lambda" {
-  function_name = "hello-world-function"
+  function_name = var.lambda_function_name
   role          = var.lambda_role_arn
   image_uri     = var.image_name
   package_type  = "Image"
