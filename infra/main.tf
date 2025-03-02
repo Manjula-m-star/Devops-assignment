@@ -22,10 +22,10 @@ module "ECR" {
 # Lambda Function (including API Gateway & Cognito)
 module "LAMDA" {
   source               = "./modules/LAMDA"
-  ecr_repository_url = module.ecr.ecr_repository_url
+  ecr_repository_url = module.ECR.ecr_repository_url
   lambda_function_name =  var.lambda_function_name
-  lambda_role_arn      = module.iam.lambda_role_arn
-  image_name           = "${module.ecr.ecr_repository_url}:latest"
+  lambda_role_arn      = module.IAM.lambda_role_arn
+  image_name           = "${module.ECR.ecr_repository_url}:latest"
   attach_basic_execution = true  # Ensure this argument is passed
 }
 
