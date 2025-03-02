@@ -37,17 +37,23 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Terraform (Ensuring latest version)
+      # Step 2: Force Remove Old Terraform (Fixes chdir issue)
+      - name: Remove Old Terraform Binary (if exists)
+        run: |
+          sudo rm -f $(which terraform) || true
+          rm -rf ~/.terraform.d/plugin-cache || true
+
+      # Step 3: Set up Terraform (Explicit Version)
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: latest  # Ensures latest Terraform version
+          terraform_version: 1.5.7  # Explicitly set version
 
-      # Step 3: Check Terraform Version
+      # Step 4: Verify Terraform Version
       - name: Check Terraform Version
-        run: terraform --version
+        run: terraform version
 
-      # Step 4: Configure AWS Credentials
+      # Step 5: Configure AWS Credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -55,49 +61,49 @@ jobs:
           role-session-name: GitHubActions
           aws-region: us-east-1
 
-      # Step 5: Install TFLint (Terraform Linter)
+      # Step 6: Install TFLint (Terraform Linter)
       - name: Install TFLint
         run: |
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           tflint --version  # Verify the installed version
 
-      # Step 6: Run TFLint
+      # Step 7: Run TFLint
       - name: Run TFLint
         run: |
           cd infra/
           tflint --init
           tflint
 
-      # Step 7: Initialize Terraform (Fixed)
+      # Step 8: Initialize Terraform (Fixed)
       - name: Terraform Init
         run: |
           cd infra/
           terraform init -backend-config=../environment/.backend
 
-      # Step 8: Validate Terraform Configuration
+      # Step 9: Validate Terraform Configuration
       - name: Terraform Validate
         run: |
           cd infra/
           terraform validate
 
-      # Step 9: Set Environment Variable (Fix for Push & PR)
+      # Step 10: Set Deployment Environment Variable
       - name: Set Deployment Environment
         run: echo "DEPLOY_ENV=${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_ENV
 
-      # Step 10: Terraform Plan
+      # Step 11: Terraform Plan
       - name: Terraform Plan
         run: |
           cd infra/
           terraform plan -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
 
-      # Step 11: Terraform Apply (Only on Push)
+      # Step 12: Terraform Apply (Only on Push)
       - name: Terraform Apply
         if: github.event_name == 'push'
         run: |
           cd infra/
           terraform apply -auto-approve -var-file=../environment/${{ env.DEPLOY_ENV }}.tfvars
 
-      # Step 12: Terraform Destroy (Only if manually triggered with "destroy")
+      # Step 13: Terraform Destroy (Only if manually triggered with "destroy")
       - name: Terraform Destroy
         if: github.event_name == 'workflow_dispatch' && env.DEPLOY_ENV == 'destroy'
         run: |
