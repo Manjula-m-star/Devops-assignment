@@ -31,3 +31,8 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
   role       = aws_iam_role.lambda_exec_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+# ✅ FIX: Output IAM Role ARN so it can be used in main.tf
+output "lambda_role_arn" {
+  description = "The ARN of the IAM role for Lambda"
+  value       = aws_iam_role.lambda_exec_role.arn
+}
