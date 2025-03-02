@@ -4,13 +4,13 @@ output "api_gateway_url" {
 }
 
 output "lambda_function_arn" {
-  value = aws_lambda_function.your_lambda_function.arn
+  value = aws_lambda_function.my_lambda.arn  # ✅ Matches `main.tf`
 }
 
 output "cognito_user_pool_id" {
-  value = aws_cognito_user_pool.your_user_pool.id
+  value = aws_cognito_user_pool.oidc.id  # ✅ Matches `main.tf`
 }
 
 output "cognito_client_id" {
-  value = aws_cognito_user_pool_client.your_client.id
+  value = aws_cognito_user_pool_client.oidc_client.id  # ✅ Matches `main.tf`
 }
