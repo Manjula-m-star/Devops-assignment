@@ -13,6 +13,4 @@ provider "aws" {
   region = var.aws_region  # Use a variable for flexibility
 }
 
-terraform {
-  backend "s3" {}  # If using AWS S3 as the backend
-}
+
