@@ -32,4 +32,5 @@ module "LAMDA" {
 # IAM Role for Lambda
 module "IAM" {
   source = "./modules/IAM"
+  lambda_role_arn = module.IAM.lambda_role_arn
 }
