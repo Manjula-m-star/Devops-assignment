@@ -26,6 +26,7 @@ module "iam" {
 # Lambda Function (including API Gateway & Cognito)
 module "lambda" {
   source               = "./modules/LAMDA"
+  ecr_repository_url = module.ecr.ecr_repository_url
   lambda_function_name = var.lambda_function_name
   lambda_role_arn      = module.iam.lambda_role_arn
   image_name           = "${module.ecr.ecr_repository_url}:latest"
