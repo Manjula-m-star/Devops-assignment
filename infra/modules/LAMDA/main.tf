@@ -11,7 +11,10 @@ terraform {
 # Data Source: Get latest ECR image for Lambda
 data "aws_ecr_image" "latest_image" {
   repository_name = "my-app-repo"
-  image_tag       = "latest"
+  most_recent     = true
+  lifecycle {
+    ignore_changes =[image_tag]
+  }
 }
 
 # Lambda Function with ECR Image
