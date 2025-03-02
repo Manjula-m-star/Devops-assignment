@@ -27,7 +27,7 @@ resource "aws_lambda_function" "my_lambda" {
     }
   }
 
-  depends_on = [aws_iam_role_policy_attachment.lambda_exec_policy_attachment]
+# depends_on = [aws_iam_role_policy_attachment.lambda_exec_policy_attachment]
 }
 
 # API Gateway
