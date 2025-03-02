@@ -1,15 +1,22 @@
-FROM node:18  
+# Use Node.js 18 LTS as the base image
+FROM node:18
+
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy package.json and package-lock.json first (if available)
 COPY package*.json ./
-RUN npm install
 
-# Copy application files
+# Ensure npm is up to date
+RUN npm install -g npm@latest
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy the entire application (after dependencies are installed)
 COPY . .
 
-# Expose port
+# Expose the port
 EXPOSE 3000
 
 # Start the application
