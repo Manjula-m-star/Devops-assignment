@@ -2,7 +2,7 @@
 region = "us-west-2"
 
 # ECR Repository Name
-repo_name = "my-app-repo"
+repo_name = "my-demo-repo"
 
 # Lambda Configuration
 lambda_function_name = "hello-world-function"
