@@ -13,22 +13,23 @@ provider "aws" {
 }
 
 # Create ECR Repository
-module "ecr" {
+module "ECR" {
   source    = "./modules/ECR"
   repo_name = var.repo_name
 }
 
-# IAM Role for Lambda
-module "iam" {
-  source = "./modules/IAM"
-}
 
 # Lambda Function (including API Gateway & Cognito)
-module "lambda" {
+module "LAMDA" {
   source               = "./modules/LAMDA"
   ecr_repository_url = module.ecr.ecr_repository_url
   lambda_function_name =  var.lambda_function_name
   lambda_role_arn      = module.iam.lambda_role_arn
   image_name           = "${module.ecr.ecr_repository_url}:latest"
   attach_basic_execution = true  # Ensure this argument is passed
+}
+
+# IAM Role for Lambda
+module "IAM" {
+  source = "./modules/IAM"
 }
