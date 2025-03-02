@@ -25,7 +25,7 @@ module "LAMDA" {
   ecr_repository_url = module.ECR.ecr_repository_url
   lambda_function_name =  var.lambda_function_name
   lambda_role_arn      = module.IAM.lambda_role_arn
-  image_name           = "${module.ECR.ecr_repository_url}:latest"
+  image_name           = "010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest"
   attach_basic_execution = true  # Ensure this argument is passed
 }
 
