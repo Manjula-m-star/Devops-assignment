@@ -8,7 +8,6 @@ terraform {
   required_version = ">= 1.0.0"
 }
 
-<<<<<<< HEAD
 # Data Source: Get latest ECR image for Lambda
 data "aws_ecr_repository" "app_repo" {
   name = "my-demo-repo"
@@ -21,18 +20,13 @@ data "aws_ecr_image" "latest_image" {
 }
 
 
-=======
->>>>>>> 2c082873e2be69d3b9d4625068819d75dc19405e
 # Lambda Function with ECR Image
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
   role          = var.lambda_role_arn 
   package_type  = "Image"
-<<<<<<< HEAD
   image_uri = "010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest"
-=======
-  image_uri     = "010438510478.dkr.ecr.us-east-1.amazonaws.com/my-demo-repo:latest"
->>>>>>> 2c082873e2be69d3b9d4625068819d75dc19405e
+  
 
   environment {
     variables = {
