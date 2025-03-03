@@ -13,11 +13,11 @@ data "aws_ecr_repository" "app_repo" {
   name = "my-demo-repo"
 }
 
-data "aws_ecr_image" "latest_image" {
+#data "aws_ecr_image" "latest_image" {
  # count           = length(data.aws_ecr_repository.app_repo.repository_url) > 0 ? 1 : 0
-  repository_name = "my-demo-repo"
-  most_recent     = true
-}
+  #repository_name = "my-demo-repo"
+ # most_recent     = true
+#}
 
 
 # Lambda Function with ECR Image
