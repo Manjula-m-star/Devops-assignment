@@ -10,9 +10,9 @@ terraform {
 }
 
 # Check if IAM role already exists
-resource "aws_iam_role" "lambda_exec_role" {
+resource "aws_iam_role" "existing_lambda_exec_role" {
   name = "lambdaExecRoleHelloWorld1"
-  
+
   count = length(data.aws_iam_role.existing_lambda_exec_role.name) > 0 ? 0 : 1
 
 
