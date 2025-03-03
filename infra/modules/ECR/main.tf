@@ -1,20 +1,17 @@
-# Check if the ECR repository already exists
+# ==========================================================================================
+# If the ECR repository "my-demo-repo" already exists, run the following command to import it:
+#terraform import aws_ecr_repository.app_repo my-demo-repo
+# ==========================================================================================
+
+# Try to fetch an existing ECR repository (for reference, but NOT for conditional creation)
 data "aws_ecr_repository" "existing_repo" {
   name = "my-demo-repo"
 }
 
-# Conditionally create ECR repository only if it doesn’t exist
+# Create ECR repository (if not manually created)
 resource "aws_ecr_repository" "app_repo" {
-  count = length(try(data.aws_ecr_repository.existing_repo.repository_url, "")) > 0 ? 0 : 1
-  name  = "my-demo-repo"
-
-  # Prevent Terraform from modifying an existing repository
+  name = "my-demo-repo"
   lifecycle {
     prevent_destroy = true
- }
-
-
-
-
-
+  }
 }
