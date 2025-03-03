@@ -3,15 +3,18 @@ data "aws_ecr_repository" "existing_repo" {
   name = "my-demo-repo"
 }
 
-# Create ECR repository only if it doesn't exist
+# Conditionally create ECR repository only if it doesn’t exist
 resource "aws_ecr_repository" "app_repo" {
-  name = "my-demo-repo"
+  count = length(try(data.aws_ecr_repository.existing_repo.repository_url, "")) > 0 ? 0 : 1
+  name  = "my-demo-repo"
 
-  # Ensure Terraform doesn't try to update the repo if it exists
+  # Prevent Terraform from modifying an existing repository
   lifecycle {
     prevent_destroy = true
-  }
+ }
+
+
+
 
 
 }
-

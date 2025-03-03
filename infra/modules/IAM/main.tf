@@ -20,10 +20,39 @@ resource "aws_iam_role" "lambda_exec_role" {
   })
 }
 
-# Attach policy to IAM role (using the correct reference)
+# Attach AWSLambdaBasicExecutionRole policy to the IAM role
 resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
   role       = coalesce(try(aws_iam_role.lambda_exec_role[0].name, ""), data.aws_iam_role.existing_lambda_exec_role.name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# Create ECR pull policy (allows Lambda to pull images from ECR)
+resource "aws_iam_policy" "ecr_pull_policy" {
+  name        = "LambdaECRPullPolicy"
+  description = "Allows Lambda to pull images from ECR"
+  
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+      ],
+      Resource = "*"
+    },
+    {
+      Effect = "Allow",
+      Action = "ecr:GetAuthorizationToken",
+      Resource = "*"
+    }]
+  })
+}
+
+# Attach ECR pull policy to the IAM role
+resource "aws_iam_role_policy_attachment" "lambda_ecr_policy_attach" {
+  role       = coalesce(try(aws_iam_role.lambda_exec_role[0].name, ""), data.aws_iam_role.existing_lambda_exec_role.name)
+  policy_arn = aws_iam_policy.ecr_pull_policy.arn
 }
 
 # Output IAM Role ARN
