@@ -9,8 +9,15 @@ terraform {
   required_version = ">= 1.0.0"
 }
 
+# Check if IAM role already exists
 resource "aws_iam_role" "lambda_exec_role" {
   name = "lambdaExecRoleHelloWorld1"
+}  
+
+# Create IAM role only if it doesn't exist
+resource "aws_iam_role" "lambda_exec_role" {
+  count = length(data.aws_iam_role.existing_lambda_exec_role.name) > 0 ? 0 : 1
+  name  = "lambdaExecRoleHelloWorld1"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
