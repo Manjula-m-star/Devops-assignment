@@ -15,7 +15,8 @@ resource "aws_iam_role" "lambda_exec_role" {
 }  
 
 # Create IAM role only if it doesn't exist
-#resource "aws_iam_role" "lambda_exec_role" {
+#resource "aws_iam_role" "lambda_exec_role" 
+{
   count = length(data.aws_iam_role.existing_lambda_exec_role.name) > 0 ? 0 : 1
  # name  = "lambdaExecRoleHelloWorld1"
 
@@ -32,6 +33,7 @@ resource "aws_iam_role" "lambda_exec_role" {
     ]
   })
 }
+
 
 # Attach Basic Execution Policy
 resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
